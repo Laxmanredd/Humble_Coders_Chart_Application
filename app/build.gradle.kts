@@ -1,7 +1,17 @@
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
+}
+
+// Load properties from local.properties
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
 }
 
 android {
@@ -19,7 +29,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField("String", "GEMINI_API_KEY", "\"AIzaSyCQcYsEPO_sW10nNpJs0_I4pmUrtNsFRQw\"")
+        val apiKey = localProperties.getProperty("GEMINI_API_KEY") ?: "YOUR_API_KEY"
+        buildConfigField("String", "GEMINI_API_KEY", "\"'$apiKey'\"")
     }
 
     buildTypes {
@@ -41,9 +52,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -69,7 +77,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2024.05.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
+geo    debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
